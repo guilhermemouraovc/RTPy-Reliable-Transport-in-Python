@@ -1,6 +1,7 @@
 import socket
 from common.protocol import Hello, HelloOk
 from common.logging_utils import setup_logger
+from common.protocol import Mode
 
 HOST = "127.0.0.1"
 PORT = 5001
@@ -8,7 +9,7 @@ PORT = 5001
 logger = setup_logger("server", logfile="logs/server.log")
 
 def validate_hello(h: Hello) -> tuple[bool, str]:
-    if h.modo not in ("GBN", "SR"):
+    if h.modo not in (Mode.GBN, Mode.SR):
         return False, "modo inválido"
     if h.max_msg_len < 30:
         return False, "max_msg_len deve ser >= 30"

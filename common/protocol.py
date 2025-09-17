@@ -17,7 +17,7 @@ class Hello:
     def serialize(self) -> str:
         return (
             "HELLO "
-            f"modo={self.modo} "
+            f"modo={self.modo.value} "
             f"max_msg_len={self.max_msg_len} "
             f"checksum={self.checksum} "
             f"timeout_ms={self.timeout_ms} "
