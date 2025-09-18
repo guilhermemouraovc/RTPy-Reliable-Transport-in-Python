@@ -10,8 +10,8 @@ source .venv/Scripts/activate
 pip install -r requirements.txt
 
 # Terminal 1
-python server/server.py
+ python -m server.server
 
 # Terminal 2
-python client/client.py --modo GBN --m 64 --checksum CRC16 --timeout 300 --ack-mode INDIVIDUAL
+python -m client.client --modo GBN --m 64 --checksum CRC16 --timeout 300 --ack-mode INDIVIDUAL
 
