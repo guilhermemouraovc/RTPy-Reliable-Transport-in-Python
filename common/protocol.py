@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from enum import Enum
 from typing import Dict
+from common.checksum import adler16
 
 class Mode(str, Enum):
     GBN = "GBN"
@@ -13,6 +14,7 @@ class Hello:
     checksum: str
     timeout_ms: int
     ack_mode: str  # INDIVIDUAL | GROUP
+    crypto: str = "OFF"  # ON | OFF
 
     def serialize(self) -> str:
         return (
@@ -22,6 +24,8 @@ class Hello:
             f"checksum={self.checksum} "
             f"timeout_ms={self.timeout_ms} "
             f"ack_mode={self.ack_mode}"
+            f" ack_mode={self.ack_mode} "
+            f"crypto={self.crypto}"
         )
 
     @staticmethod
@@ -39,6 +43,7 @@ class Hello:
             checksum=kv["checksum"],
             timeout_ms=int(kv["timeout_ms"]),
             ack_mode=kv["ack_mode"],
+            crypto=kv.get("crypto", "OFF"),
         )
 
 @dataclass
@@ -72,20 +77,29 @@ class HelloOk:
 # --- Milestone 2: DATA / ACK ---
 
 def make_data(seq: int, total: int, payload: str) -> str:
+    # payload máximo de 4 chars
     assert 0 <= len(payload) <= 4
-    return f"DATA|{seq}|{len(payload)}|{total}|{payload}"
+    csum = adler16(payload.encode("utf-8"))      # checksum do payload (hex 4 dígitos)
+    return f"DATA|{seq}|{len(payload)}|{total}|{payload}|{csum}"
 
 def parse_data(line: str) -> dict:
     if not line.startswith("DATA|"):
         raise ValueError("not DATA")
-    _, s_seq, s_len, s_total, payload = line.split("|", 4)
+    parts = line.split("|")
+    if len(parts) != 6:
+        raise ValueError("bad DATA format")
+    _, s_seq, s_len, s_total, payload, s_csum = parts
     seq = int(s_seq)
     ln = int(s_len)
     total = int(s_total)
+
     if ln != len(payload):
         raise ValueError("len mismatch")
-    if ln > 4:
-        raise ValueError("payload > 4")
+
+    # valida integridade
+    if adler16(payload.encode("utf-8")) != s_csum.upper():
+        raise ValueError("checksum error")
+
     return {"seq": seq, "len": ln, "total": total, "payload": payload}
 
 def make_ack(next_seq: int) -> str:
