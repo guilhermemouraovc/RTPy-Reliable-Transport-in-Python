@@ -69,3 +69,29 @@ class HelloOk:
             win_min=int(kv["win_min"]),
             win_max=int(kv["win_max"]),
         )
+# --- Milestone 2: DATA / ACK ---
+
+def make_data(seq: int, total: int, payload: str) -> str:
+    assert 0 <= len(payload) <= 4
+    return f"DATA|{seq}|{len(payload)}|{total}|{payload}"
+
+def parse_data(line: str) -> dict:
+    if not line.startswith("DATA|"):
+        raise ValueError("not DATA")
+    _, s_seq, s_len, s_total, payload = line.split("|", 4)
+    seq = int(s_seq)
+    ln = int(s_len)
+    total = int(s_total)
+    if ln != len(payload):
+        raise ValueError("len mismatch")
+    if ln > 4:
+        raise ValueError("payload > 4")
+    return {"seq": seq, "len": ln, "total": total, "payload": payload}
+
+def make_ack(next_seq: int) -> str:
+    return f"ACK|{next_seq}"
+
+def parse_ack(line: str) -> int:
+    if not line.startswith("ACK|"):
+        raise ValueError("not ACK")
+    return int(line.split("|", 1)[1])

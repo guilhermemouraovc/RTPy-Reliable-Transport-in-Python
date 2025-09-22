@@ -1,7 +1,6 @@
 import socket
-from common.protocol import Hello, HelloOk
+from common.protocol import Hello, HelloOk, Mode
 from common.logging_utils import setup_logger
-from common.protocol import Mode
 
 HOST = "127.0.0.1"
 PORT = 5001
@@ -22,6 +21,8 @@ def validate_hello(h: Hello) -> tuple[bool, str]:
     return True, "ok"
 
 def main():
+    from common.protocol import parse_data, make_ack  # M2
+
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.bind((HOST, PORT))
         s.listen(1)
@@ -30,7 +31,11 @@ def main():
         conn, addr = s.accept()
         with conn:
             logger.info(f"Conexão de {addr}")
+
+            # ===== Handshake =====
             data = conn.recv(1024)
+            if not data:
+                return
             line = data.decode("utf-8").strip()
             logger.info(f"Recebido: {line}")
 
@@ -49,6 +54,49 @@ def main():
             hello_ok = HelloOk(win_init=5, win_min=1, win_max=5).serialize() + "\n"
             logger.info(f"Enviando: {hello_ok.strip()}")
             conn.sendall(hello_ok.encode("utf-8"))
+
+            # ===== Milestone 2: receber DATA e enviar ACK (canal perfeito) =====
+            buf = {}
+            expected = 0
+            total = None
+
+            try:
+                while True:
+                    raw = conn.recv(4096)
+                    if not raw:
+                        logger.info("Cliente fechou a conexão.")
+                        break
+
+                    for line in raw.decode("utf-8").splitlines():
+                        if not line:
+                            continue
+                        try:
+                            pkt = parse_data(line)
+                        except Exception:
+                            logger.info(f"Ignorando linha não-DATA: {line}")
+                            continue
+
+                        seq = pkt["seq"]
+                        total = pkt["total"] if total is None else total
+                        buf[seq] = pkt["payload"]
+
+                        # calcula próximo esperado (ACK cumulativo)
+                        while expected in buf:
+                            expected += 1
+                        ack = make_ack(expected) + "\n"
+                        conn.sendall(ack.encode("utf-8"))
+                        logger.info(f"ACK -> {ack.strip()}")
+
+                        if total is not None and expected >= total:
+                            msg = "".join(buf[i] for i in range(total))
+                            logger.info(f"Mensagem completa ({total} pacotes): {msg}")
+                            return
+            except Exception as e:
+                logger.exception(f"Erro no loop de DATA: {e}")
+                try:
+                    conn.sendall(f"ERR {e}\n".encode("utf-8"))
+                except Exception:
+                    pass
 
 if __name__ == "__main__":
     main()
