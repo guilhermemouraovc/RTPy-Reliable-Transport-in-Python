@@ -127,9 +127,30 @@ e
 
 pip install -r requirements.txt
 
-# Terminal 1
- python -m server.server
+# Milestone 1
 
-# Terminal 2
+## Terminal 1
+ python -m server.server
+## Terminal 2
 python -m client.client --modo GBN --m 64 --checksum CRC16 --timeout 300 --ack-mode INDIVIDUAL
+
+# Milestone 2
+
+## Terminal 1
+ python -m server.server
+## Terminal 2
+ python -m client.client --msg "Mensagem teste sem erros "
+
+ # Milestone 3
+
+## Terminal 1
+ python -m server.server
+## Terminal 2 (com perda determinística do primeiro pacote)
+ python -m client.client --msg "mensagem com perda controlada" \ --loss-every 5 --loss-offset 0
+## com corrupção determinística
+ python -m client.client --msg "checksum falha aqui e retransmite" \ --corrupt-every 7 --corrupt-offset 0
+## Cliente — com criptografia e perda
+ python -m client.client --crypto ON --key "SUA_CHAVE_FERNET_AQUI" \ --msg "sigiloso com perda" --loss-every 4
+
+
 
