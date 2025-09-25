@@ -109,3 +109,20 @@ def parse_ack(line: str) -> int:
     if not line.startswith("ACK|"):
         raise ValueError("not ACK")
     return int(line.split("|", 1)[1])
+# --- Milestone 3: ACK individual e NACK ---
+
+def make_ack_individual(seq: int) -> str:
+    return f"ACKI|{seq}"
+
+def parse_ack_individual(line: str) -> int:
+    if not line.startswith("ACKI|"):
+        raise ValueError("not ACKI")
+    return int(line.split("|", 1)[1])
+
+def make_nack(seq: int) -> str:
+    return f"NACK|{seq}"
+
+def parse_nack(line: str) -> int:
+    if not line.startswith("NACK|"):
+        raise ValueError("not NACK")
+    return int(line.split("|", 1)[1])
