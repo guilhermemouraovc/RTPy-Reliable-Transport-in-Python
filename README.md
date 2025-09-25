@@ -6,6 +6,7 @@ Academic implementation of a reliable transport protocol at the application laye
 # Git Bash — create/activate venv (optional)
 python -m venv .venv
 source .venv/Scripts/activat# RTPy – Reliable Transport in Python
+pip install -r requirements.txt
 ### Trabalho Acadêmico – 2025.2
 
 ## Português
@@ -123,34 +124,45 @@ This project implements, in Python, a reliable transport protocol at the applica
    ```bash
    python -m client.client --msg "ultra confidential secret" --crypto ON --key <your_key>
    ```
-e
 
-pip install -r requirements.txt
 
 # Milestone 1
 
 ## Terminal 1
+ ```bash
  python -m server.server
+ ```
 ## Terminal 2
 python -m client.client --modo GBN --m 64 --checksum CRC16 --timeout 300 --ack-mode INDIVIDUAL
 
 # Milestone 2
 
 ## Terminal 1
+ ```bash
  python -m server.server
+ ```
 ## Terminal 2
+ ```bash
  python -m client.client --msg "Mensagem teste sem erros "
-
+ ```
  # Milestone 3
 
 ## Terminal 1
+ ```bash
  python -m server.server
+ ```
 ## Terminal 2 (com perda determinística do primeiro pacote)
+ ```bash
  python -m client.client --msg "mensagem com perda controlada" \ --loss-every 5 --loss-offset 0
+ ```
 ## com corrupção determinística
+ ```bash
  python -m client.client --msg "checksum falha aqui e retransmite" \ --corrupt-every 7 --corrupt-offset 0
+ ```
 ## Cliente — com criptografia e perda
+ ```bash
  python -m client.client --crypto ON --key "SUA_CHAVE_FERNET_AQUI" \ --msg "sigiloso com perda" --loss-every 4
+ ```
 
 
 
