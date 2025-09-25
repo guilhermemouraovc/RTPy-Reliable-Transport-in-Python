@@ -1,4 +1,9 @@
 # RTPy-Reliable-Transport-in-Python
+![License](https://img.shields.io/badge/license-MIT-green)  
+![Python](https://img.shields.io/badge/python-3.13+-blue)  
+![Status](https://img.shields.io/badge/status-Milestone%203%20complete-orange)  
+![Subject](https://img.shields.io/badge/course-Computer%20Networks-lightgrey)
+
 Academic implementation of a reliable transport protocol at the application layer using Python sockets. Features handshake, sliding window (Go-Back-N and Selective Repeat), ACK/NACK, checksum, and loss/error simulation for client-server communication study.
 
 ## How to run (Milestone 1)
@@ -6,7 +11,6 @@ Academic implementation of a reliable transport protocol at the application laye
 # Git Bash — create/activate venv (optional)
 python -m venv .venv
 source .venv/Scripts/activat# RTPy – Reliable Transport in Python
-pip install -r requirements.txt
  ```
 ### Trabalho Acadêmico – 2025.2
 
@@ -134,8 +138,9 @@ This project implements, in Python, a reliable transport protocol at the applica
  python -m server.server
  ```
 ## Terminal 2
+ ```bash
 python -m client.client --modo GBN --m 64 --checksum CRC16 --timeout 300 --ack-mode INDIVIDUAL
-
+ ```
 # Milestone 2
 
 ## Terminal 1
@@ -167,3 +172,4 @@ python -m client.client --modo GBN --m 64 --checksum CRC16 --timeout 300 --ack-m
 
 
 
+<sub>Developed by **Guilherme Mourão** — Computer Science Undergraduate</sub>
