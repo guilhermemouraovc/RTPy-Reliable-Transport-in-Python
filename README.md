@@ -7,6 +7,7 @@ Academic implementation of a reliable transport protocol at the application laye
 python -m venv .venv
 source .venv/Scripts/activat# RTPy – Reliable Transport in Python
 pip install -r requirements.txt
+ ```
 ### Trabalho Acadêmico – 2025.2
 
 ## Português
